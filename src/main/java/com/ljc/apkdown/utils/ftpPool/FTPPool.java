@@ -5,38 +5,48 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class FTPPool {
+
     private static final GenericObjectPool<FTPClient> internalPool;
 
-    @Value("${ftp.host}")
-    private static String host;
+
+    private static String FTPHOST;
+
     @Value("${ftp.port}")
-    private static int port;
+    private static int PORT;
     @Value("${ftp.username}")
-    private static String username;
+    private static String USERNAME;
     @Value("${ftp.password}")
-    private static String password;
+    private static String PASSWORD;
     @Value("${ftp.encoding}")
-    private static String encoding;
+    private static String ENCODING;
     @Value("${ftp.maxTotal}")
-    private static int maxTotal;
+    private static int MAXTOTAL;
     @Value("${ftp.maxWaitMillis}")
-    private static int maxWaitMillis;
+    private static int MAXWAITMILLIS;
+
+    @Value("${ftp.host}")
+    public void setHost(String host){
+        FTPPool.FTPHOST=host;
+        System.out.printf("==="+FTPHOST);
+    }
+
 
     static {
         FTPConfig config = new FTPConfig();
-        config.setEncoding(encoding);
-        config.setHost(host);
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setPort(port);
-        config.setMaxTotal(maxTotal);
-        config.setMaxWaitMillis(maxWaitMillis);
+        config.setEncoding("UTF-8");
+        config.setHost("192.168.1.190");
+        config.setUsername("jenkins");
+        config.setPassword("wm2012dx");
+        config.setPort(21);
+        config.setMaxTotal(8);
+        config.setMaxWaitMillis(300_00);
         System.out.printf(String.valueOf(config));
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();

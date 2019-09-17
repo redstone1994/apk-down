@@ -10,6 +10,7 @@ import java.util.List;
 
 @Slf4j
 public class FTPHelper {
+
     FTPClient client = FTPPool.getFTPClient();
 
     /**
@@ -28,6 +29,7 @@ public class FTPHelper {
             for (FTPFile file : files) {
                 if (file.isFile()) {
                     arFiles.add(directory + file.getName());
+                    System.out.printf(arFiles.toString());
                 } else if (file.isDirectory()) {
                     ftpList(directory + file.getName() + "/", arFiles);
                 }
