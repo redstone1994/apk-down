@@ -1,0 +1,9 @@
+ftp:
+  username: jenkins
+  password: wm2012dx
+  host: 10.10.10.11
+  port: 21
+  encoding: UTF-8
+  workPath: /
+  maxTotal: 8
+  maxWaitMillis: 30_000
