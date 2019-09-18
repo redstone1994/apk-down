@@ -84,7 +84,7 @@ public class FTPPoolFactory implements PooledObjectFactory<FTPClient> {
     public boolean validateObject(PooledObject<FTPClient> pooledObject) {
         FTPClient ftpClient = pooledObject.getObject();
         try {
-            return ftpClient.sendNoOp();//
+            return ftpClient.sendNoOp();
         } catch (IOException e) {
             log.error("Failed to validate client:", e);
             return false;

@@ -7,14 +7,14 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
+@Configuration
 public class FTPPool {
 
     private static final GenericObjectPool<FTPClient> internalPool;
-
 
     private static String FTPHOST;
 
@@ -33,25 +33,22 @@ public class FTPPool {
 
     @Value("${ftp.host}")
     public void setHost(String host){
-        FTPPool.FTPHOST=host;
-        System.out.printf("==="+FTPHOST);
+        FTPPool.FTPHOST =host;
     }
-
 
     static {
         FTPConfig config = new FTPConfig();
         config.setEncoding("UTF-8");
-        config.setHost("192.168.1.190");
+        config.setHost("10.10.10.11"); //"10.10.10.11"
         config.setUsername("jenkins");
         config.setPassword("wm2012dx");
         config.setPort(21);
         config.setMaxTotal(8);
         config.setMaxWaitMillis(300_00);
-        System.out.printf(String.valueOf(config));
 
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-        poolConfig.setMaxTotal(config.getMaxTotal());// 不设置的话默认是8
-        poolConfig.setMaxWaitMillis(config.getMaxWaitMillis());// 不设置默认无限等待
+        poolConfig.setMaxTotal(10);// 不设置的话默认是8
+        poolConfig.setMaxWaitMillis(30000);// 不设置默认无限等待
 
         internalPool = new GenericObjectPool<FTPClient>(new FTPPoolFactory(config), poolConfig);
     }
