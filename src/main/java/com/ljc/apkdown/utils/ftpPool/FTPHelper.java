@@ -79,43 +79,21 @@ public class FTPHelper {
     /**
      * 下载文件 *
      *
-     * @param pathname  FTP服务器文件目录 *
-     * @param filename  文件名称 *
-     * @param localpath 下载后的文件路径 *
+     * @param pathname FTP服务器文件目录 *
      * @return
      */
-    public boolean downloadFile(String pathname, String filename) {
+    public InputStream downloadFile(String pathname) throws IOException {
         client.enterLocalPassiveMode();
+        client.setFileType(FTP.BINARY_FILE_TYPE);
+        client.setControlEncoding("UTF-8");
+
+        log.info("开始下载文件");
         try {
-            log.info("开始下载文件");
-
-            FTPFile[] ftpFiles = client.listFiles(pathname);
-            for (FTPFile file : ftpFiles) {
-                if (filename.equalsIgnoreCase(file.getName())) {
-
-                    client.retrieveFile(file.getName());
-                }
-            }
-        } catch (Exception e) {
-            log.info("下载文件失败" + e.getMessage());
+            return client.retrieveFileStream(pathname);
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (client.isConnected()) {
-                try {
-                    client.disconnect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != os) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            log.error("下载失败！！！");
         }
-        return flag;
+        return null;
     }
-
 }
