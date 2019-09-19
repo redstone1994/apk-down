@@ -5,7 +5,6 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.stereotype.Component;
-import sun.net.ftp.FtpClient;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -48,23 +47,33 @@ public class FTPHelper {
      * @param ext      文件的扩展名
      * @throws IOException
      */
-    public void list(String pathName, String ext, List<String> arFiles) throws IOException {
+    List<FTPFileBean> arFiles = new ArrayList<>();
+
+    public List<FTPFileBean> list(String pathName, String ext, String item) throws IOException {
         client.enterLocalPassiveMode();
         if (pathName.startsWith("/") && pathName.endsWith("/")) {
+
+            FTPFileBean ffb = new FTPFileBean();
             String directory = pathName;
             //更换目录到当前目录
-            this.client.changeWorkingDirectory(directory);
-            FTPFile[] files = this.client.listFiles();
+//            this.client.changeWorkingDirectory(directory);
+            FTPFile[] files = this.client.listFiles(directory);
             for (FTPFile file : files) {
                 if (file.isFile()) {
                     if (file.getName().endsWith(ext)) {
-                        arFiles.add(file.getName());
+                        ffb.setFileName(file.getName());
+                        ffb.setItem(item);
+                        ffb.setFilePath(directory + file.getName());
+                        arFiles.add(ffb);
                     }
                 } else if (file.isDirectory()) {
-                    list(directory + file.getName() + "/", ext, arFiles);
+                    list(directory + file.getName() + "/", ext, item);
                 }
             }
+
+            return arFiles;
         }
+        return null;
     }
 
     /**
@@ -75,28 +84,16 @@ public class FTPHelper {
      * @param localpath 下载后的文件路径 *
      * @return
      */
-    public boolean downloadFile(String pathname, String filename, String localpath) {
+    public boolean downloadFile(String pathname, String filename) {
         client.enterLocalPassiveMode();
-        boolean flag = false;
-        OutputStream os = null;
         try {
             log.info("开始下载文件");
-            //切换FTP目录
-            client.changeWorkingDirectory(pathname);
-            FTPFile[] ftpFiles = client.listFiles();
+
+            FTPFile[] ftpFiles = client.listFiles(pathname);
             for (FTPFile file : ftpFiles) {
                 if (filename.equalsIgnoreCase(file.getName())) {
-                    File localFile = new File(localpath + file.getName());
 
-                    os = new FileOutputStream(localFile);
-                    client.setFileType(FTP.BINARY_FILE_TYPE);
-                    flag = client.retrieveFile(file.getName(), os);
-                    if (!flag) {
-                        log.info("下载文件失败");
-                    } else {
-                        log.info("下载文件成功");
-                    }
-                    os.close();
+                    client.retrieveFile(file.getName());
                 }
             }
         } catch (Exception e) {
@@ -120,7 +117,5 @@ public class FTPHelper {
         }
         return flag;
     }
-
-
 
 }
