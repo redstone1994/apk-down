@@ -16,6 +16,12 @@ public class FTPHelper {
 
     FTPClient client = FTPPool.getFTPClient();
 
+    /** 本地字符编码 */
+    private static String LOCAL_CHARSET = "GBK";
+
+    // FTP协议里面，规定文件名编码为iso-8859-1
+    private static String SERVER_CHARSET = "ISO-8859-1";
+
     /**
      * 递归遍历出目录下面所有文件
      *
@@ -85,15 +91,42 @@ public class FTPHelper {
     public InputStream downloadFile(String pathname) throws IOException {
         client.enterLocalPassiveMode();
         client.setFileType(FTP.BINARY_FILE_TYPE);
-        client.setControlEncoding("UTF-8");
+//        if (FTPReply.isPositiveCompletion(client.sendCommand("OPTS UTF8", "ON"))) {// 开启服务器对UTF-8的支持，如果服务器支持就用UTF-8编码，否则就使用本地编码（GBK）.
+//            LOCAL_CHARSET = "UTF-8";
+//        }
+
+//        client.setControlEncoding(LOCAL_CHARSET);
 
         log.info("开始下载文件");
         try {
-            return client.retrieveFileStream(pathname);
+            return client.retrieveFileStream(pathname);//new String(pathname.getBytes(LOCAL_CHARSET), SERVER_CHARSET)
         } catch (IOException e) {
             e.printStackTrace();
             log.error("下载失败！！！");
         }
+
         return null;
     }
+
+    /**
+     * 将inputStream转化为file
+     * @param is
+     * @param file 要输出的文件目录
+     */
+    public static void inputStream2File(InputStream is, File file) throws IOException {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            int len = 0;
+            byte[] buffer = new byte[8192];
+
+            while ((len = is.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+        } finally {
+            os.close();
+            is.close();
+        }
+    }
+
 }

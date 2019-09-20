@@ -70,31 +70,31 @@ public class FileListController {
         }
     }
 
-    @GetMapping("/down")
-    @ResponseBody
-    public void downLoad(HttpServletResponse response, @RequestParam(name = "filePath") String filePath) throws UnsupportedEncodingException {
+    @GetMapping(value = "/down")
+    public void downLoad(HttpServletResponse response, @RequestParam String filePath) throws UnsupportedEncodingException {
         FTPHelper ftpHelper = new FTPHelper();
-
+        log.info(filePath);
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filePath, "UTF-8"));
-        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filePath, "GBK"));
+//        response.setCharacterEncoding("utf-8");
         byte[] buff = new byte[1024];
         BufferedInputStream bis = null;
         OutputStream os = null;
 //        File f = new File(path + File.separator + fileName);
-//        File f = new File(path);
+//        File f = new File();
 
         try {
-            response.addHeader("Content-Length", ftpHelper.downloadFile(filePath).available() + "");
-            os = response.getOutputStream();
-            bis = new BufferedInputStream(ftpHelper.downloadFile(filePath));
-            int i = bis.read(buff);
-            while (i != -1) {
-                os.write(buff, 0, buff.length);
-                os.flush();
-                i = bis.read(buff);
+//                response.addHeader("Content-Length", ftpHelper.downloadFile(filePath).available() + "");
+                os = response.getOutputStream();
+                bis = new BufferedInputStream(ftpHelper.downloadFile(filePath));
+                int i = bis.read(buff);
+                while (i != -1) {
+                    os.write(buff, 0, buff.length);
+                    os.flush();
+                    i = bis.read(buff);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,7 +105,7 @@ public class FileListController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if (os != null) {
+            } if (os != null) {
                 try {
                     os.close();
                 } catch (IOException e) {
