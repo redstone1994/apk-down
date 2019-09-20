@@ -73,6 +73,7 @@ public class FTPHelper {
                         ffb.setFileName(file.getName());
                         ffb.setItem(item);
                         ffb.setFilePath(directory + file.getName());
+                        ffb.setTime(file.getTimestamp().getTime());
                         arFiles.add(ffb);
                     }
                 } else if (file.isDirectory()) {

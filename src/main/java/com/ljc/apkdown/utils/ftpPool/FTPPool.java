@@ -5,20 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Configuration
+@Component
 public class FTPPool {
 
     private static final GenericObjectPool<FTPClient> internalPool;
 
     private static String FTPHOST;
 
-    @Value("${ftp.port}")
+
     private static int PORT;
     @Value("${ftp.username}")
     private static String USERNAME;
@@ -32,14 +30,21 @@ public class FTPPool {
     private static int MAXWAITMILLIS;
 
     @Value("${ftp.host}")
-    public void setHost(String host){
-        FTPPool.FTPHOST =host;
+    public void setHost(String host) {
+        FTPHOST = host;
     }
+
+    @Value("${ftp.port}")
+    public void setPort(int port){
+        PORT=port;
+    }
+
+
 
     static {
         FTPConfig config = new FTPConfig();
         config.setEncoding("UTF-8");
-        config.setHost("10.10.10.11"); //"10.10.10.11"
+        config.setHost("50.2.53.112"); //"10.10.10.11"
         config.setUsername("jenkins");
         config.setPassword("wm2012dx");
         config.setPort(21);

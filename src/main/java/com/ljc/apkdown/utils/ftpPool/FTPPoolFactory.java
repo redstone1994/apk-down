@@ -26,7 +26,7 @@ public class FTPPoolFactory implements PooledObjectFactory<FTPClient> {
     public PooledObject<FTPClient> makeObject() throws Exception {
         FTPClient ftpClient = new FTPClient();
         ftpClient.setDefaultPort(ftpConfig.getPort());
-        ftpClient.setConnectTimeout(30000);
+        ftpClient.setConnectTimeout(300000);
         ftpClient.setDataTimeout(180000);
         ftpClient.setControlKeepAliveTimeout(60);
         ftpClient.setControlKeepAliveReplyTimeout(60);

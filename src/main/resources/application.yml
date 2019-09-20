@@ -1,10 +1,21 @@
 ftp:
   username: jenkins
   password: wm2012dx
-  host: 192.168.1.190
+  host: 50.2.53.112
   port: 21
   encoding: UTF-8
   workPath: /
   maxTotal: 8
   maxWaitMillis: 30_000
-qrcUrl: http://1
+qrcUrl: http://192.168.1.190:8080/apk-down
+spring:
+  freemarker:
+    request-context-attribute: req  #req访问request
+    　　 suffix: .ftl  #后缀名
+    content-type: text/html
+    enabled: true
+    cache: false #缓存配置
+    template-loader-path: classpath:/templates/ #模板加载路径 按需配置
+    charset: UTF-8 #编码格式
+    settings:
+      classic_compatible: true
