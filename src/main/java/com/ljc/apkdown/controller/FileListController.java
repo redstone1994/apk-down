@@ -1,16 +1,14 @@
 package com.ljc.apkdown.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.beust.jcommander.Parameter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.ljc.apkdown.utils.QRCodeUtil;
 import com.ljc.apkdown.utils.ftpPool.FTPFileBean;
 import com.ljc.apkdown.utils.ftpPool.FTPHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +26,13 @@ import java.util.Map;
 @Slf4j
 public class FileListController {
 
+    FTPHelper ftpHelper = new FTPHelper();
+
     @GetMapping("/qrc/{item}")
     @ResponseBody
     public void qrcController(HttpServletResponse response, @PathVariable(value = "item") String item) {
-        log.info(item);
-        String downPage = "http://192.168.1.190/fileList/" + item;
+
+        String downPage = "http://192.168.1.190:8080/apk-down/fileList/" + item;
         BitMatrix qRcodeImg = QRCodeUtil.generateQRCodeStream(downPage, response);
         // 将二维码输出到页面中
         try {
@@ -46,14 +45,12 @@ public class FileListController {
     @GetMapping("/fileList/{item}")
     @ResponseBody
     public String fileList(@PathVariable(value = "item") String item) {
-        FTPHelper ftpHelper = new FTPHelper();
+
         List<FTPFileBean> arFiles;
         Map fileInfo = new HashMap();
-
         if (StringUtils.isEmpty(item)) {
             return "非法访问！！！";
         } else {
-
             try {
                 arFiles = ftpHelper.list("/" + item + "/", "apk", item);
                 if (!arFiles.isEmpty()) {
@@ -72,46 +69,35 @@ public class FileListController {
 
     @GetMapping(value = "/down")
     public void downLoad(HttpServletResponse response, @RequestParam String filePath) throws UnsupportedEncodingException {
-        FTPHelper ftpHelper = new FTPHelper();
-        log.info(filePath);
+
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filePath, "GBK"));
+        String file = new String("app.apk".getBytes("gbk"), "iso-8859-1");
+        response.setHeader("Content-Disposition", "attachment;filename=" + file);//URLEncoder.encode(file,"GBK")
 //        response.setCharacterEncoding("utf-8");
-        byte[] buff = new byte[1024];
-        BufferedInputStream bis = null;
-        OutputStream os = null;
+
 //        File f = new File(path + File.separator + fileName);
 //        File f = new File();
 
         try {
-//                response.addHeader("Content-Length", ftpHelper.downloadFile(filePath).available() + "");
-                os = response.getOutputStream();
-                bis = new BufferedInputStream(ftpHelper.downloadFile(filePath));
-                int i = bis.read(buff);
-                while (i != -1) {
-                    os.write(buff, 0, buff.length);
-                    os.flush();
-                    i = bis.read(buff);
+            InputStream is = ftpHelper.downloadFile(filePath);
+            BufferedInputStream bis = new BufferedInputStream(is);
 
+            int len = -1;
+            byte[] buffer = new byte[1024];
+            OutputStream out = response.getOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(out);
+            while ((len = bis.read(buffer)) > -1) {
+                bos.write(buffer, 0, len);
+                bos.flush();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            bos.close();
+            bis.close();
+            out.close();
+            is.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
