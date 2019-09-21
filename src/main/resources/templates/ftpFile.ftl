@@ -1,3 +1,4 @@
+<#assign base=request.contextPath />
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
@@ -6,7 +7,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="/css/layui.css" media="all">
+    <link rel="stylesheet" href="${base}/css/layui.css" media="all">
     <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
     <script type="application/javascript">
@@ -32,8 +33,7 @@
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">下载</a>
 </script>
 
-<script src="/layui.js" charset="utf-8"></script>
-
+<script src="${base}/layui.js" charset="utf-8"></script>
 <script>
     layui.use('table', function () {
         var table = layui.table;
@@ -44,7 +44,7 @@
                 layer.msg('开始下载');
                 var name = data.fileName;
                 var path = data.filePath;
-                window.location.href = "/down" + "?" + "fileName=" + name + "&filePath=" + path;
+                window.location.href = "${base}/down" + "?" + "fileName=" + name + "&filePath=" + path;
             }
         });
 

@@ -46,6 +46,7 @@ public class FTPHelper {
                     ftpList(directory + file.getName() + "/", arFiles);
                 }
             }
+            FTPPool.returnFTPClient(client);
         }
     }
 
@@ -57,9 +58,8 @@ public class FTPHelper {
      * @throws IOException
      */
 
+    public  List<FTPFileBean> list(String pathName, String ext, String item,List<FTPFileBean> list) throws IOException {
 
-    public  List<FTPFileBean> list(String pathName, String ext, String item) throws IOException {
-        List<FTPFileBean> arFiles = new ArrayList<>();
         FTPClient client=FTPPool.getFTPClient();
         client.enterLocalPassiveMode();
         if (pathName.startsWith("/") && pathName.endsWith("/")) {
@@ -74,18 +74,19 @@ public class FTPHelper {
                         ffb.setFileName(file.getName());
                         ffb.setItem(item);
                         ffb.setFilePath(directory + file.getName());
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");// 设置你想要的格式
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                         String dateStr = df.format(file.getTimestamp().getTime());
                         ffb.setTime(dateStr);
-                        arFiles.add(ffb);
+                        list.add(ffb);
                     }
                 } else if (file.isDirectory()) {
-                    list(directory + file.getName() + "/", ext, item);
+                    list(directory + file.getName() + "/", ext, item,list);
                 }
             }
-
-            return arFiles;
+            FTPPool.returnFTPClient(client);
+            return list;
         }
+        FTPPool.returnFTPClient(client);
         return null;
     }
 
@@ -113,7 +114,7 @@ public class FTPHelper {
             e.printStackTrace();
             log.error("下载失败！！！");
         }
-
+        FTPPool.returnFTPClient(client);
         return null;
     }
 

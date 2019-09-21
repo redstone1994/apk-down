@@ -44,7 +44,7 @@ public class FTPPool {
     static {
         FTPConfig config = new FTPConfig();
         config.setEncoding("UTF-8");
-        config.setHost("50.2.53.112"); //"10.10.10.11"
+        config.setHost("10.10.10.11"); //"10.10.10.11"
         config.setUsername("jenkins");
         config.setPassword("wm2012dx");
         config.setPort(21);
