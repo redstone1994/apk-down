@@ -99,7 +99,7 @@ public class FileListController {
         try {
             InputStream is = ftpHelper.downloadFile(filePath);
             BufferedInputStream bis = new BufferedInputStream(is);
-            response.addHeader("Content-Length", is.available() + "");
+//            response.addHeader("Content-Length", is.available() + "");
 
             int len = -1;
             byte[] buffer = new byte[1024];

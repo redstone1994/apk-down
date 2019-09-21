@@ -9,18 +9,21 @@
     <link rel="stylesheet" href="/css/layui.css" media="all">
     <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <script type="application/javascript">
+        var datas=${data};
+    </script>
 </head>
 <body>
 
 <div style="text-align: center;width: auto;height: auto">
-    <table class="layui-table" lay-data="{data: ${data}, id:'idTest'}"
+    <table class="layui-table" lay-data="{data: datas, id:'idTest'}"
            lay-filter="demo">
         <thead>
         <tr>
             <th lay-data="{field:'item', width:250, align:'center', sort: true}">项目</th>
             <th lay-data="{field:'fileName', width:250, align:'center', sort: true}">包名</th>
             <th lay-data="{field:'time', width:250, align:'center', sort: true}">时间</th>
-            <th lay-data="{fixed: 'right', width:100, align:'center', toolbar: '#barDemo'}">下载</th>
+            <th lay-data="{fixed: 'right', width:100, align:'center', toolbar: '#barDemo'}">操作</th>
         </tr>
         </thead>
     </table>
@@ -41,7 +44,7 @@
                 layer.msg('开始下载');
                 var name = data.fileName;
                 var path = data.filePath;
-                window.location.href = "./down" + "?" + "fileName=" + name + "&filePath=" + path;
+                window.location.href = "/down" + "?" + "fileName=" + name + "&filePath=" + path;
             }
         });
 

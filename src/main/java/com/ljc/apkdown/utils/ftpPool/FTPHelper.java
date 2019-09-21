@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +57,9 @@ public class FTPHelper {
      * @throws IOException
      */
 
-    List<FTPFileBean> arFiles = new ArrayList<>();
-    public  List<FTPFileBean> list(String pathName, String ext, String item) throws IOException {
 
+    public  List<FTPFileBean> list(String pathName, String ext, String item) throws IOException {
+        List<FTPFileBean> arFiles = new ArrayList<>();
         FTPClient client=FTPPool.getFTPClient();
         client.enterLocalPassiveMode();
         if (pathName.startsWith("/") && pathName.endsWith("/")) {
@@ -73,7 +74,9 @@ public class FTPHelper {
                         ffb.setFileName(file.getName());
                         ffb.setItem(item);
                         ffb.setFilePath(directory + file.getName());
-                        ffb.setTime(file.getTimestamp().getTime());
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");// 设置你想要的格式
+                        String dateStr = df.format(file.getTimestamp().getTime());
+                        ffb.setTime(dateStr);
                         arFiles.add(ffb);
                     }
                 } else if (file.isDirectory()) {

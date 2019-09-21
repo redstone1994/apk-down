@@ -11,5 +11,5 @@ public class FTPFileBean {
     private String fileName;
     private String filePath;
     private String item;
-    private Date time;
+    private String time;
 }
