@@ -17,11 +17,13 @@ import java.util.List;
 @Configuration
 public class FTPHelper {
 
-    private FTPClientPool  ftpClientPool;
+    private FtpClientPool  ftpClientPool;
 
-    public void setFtpClientPool(FTPClientPool ftpClientPool) {
-        this.ftpClientPool = ftpClientPool;
+    public FTPHelper(FtpConfig properties) throws Exception {
+        FtpClientPool pool = new FtpClientPool(new FtpClientFactory(properties));
+        this.ftpClientPool = pool;
     }
+
 
     /**
      * 递归遍历出目录下面所有文件
@@ -52,7 +54,11 @@ public class FTPHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            ftpClientPool.returnObject(client);
+            try {
+                ftpClientPool.returnObject(client);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -97,7 +103,11 @@ public class FTPHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            ftpClientPool.returnObject(client);
+            try {
+                ftpClientPool.returnObject(client);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -121,7 +131,11 @@ public class FTPHelper {
             e.printStackTrace();
             log.error("下载失败！！！");
         }finally {
-            ftpClientPool.returnObject(client);
+            try {
+                ftpClientPool.returnObject(client);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
