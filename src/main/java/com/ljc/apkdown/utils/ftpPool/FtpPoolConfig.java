@@ -8,9 +8,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:ftpConfig.properties")
+@PropertySource(value = {"classpath:ftpConfig.properties"})
 @ConfigurationProperties(prefix = "ftp",ignoreUnknownFields = false)
-@Order(0)
 public class FtpPoolConfig extends GenericObjectPoolConfig {
 
     private  String host;//主机名
