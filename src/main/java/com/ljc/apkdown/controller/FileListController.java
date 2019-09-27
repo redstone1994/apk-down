@@ -6,7 +6,10 @@ import com.google.zxing.common.BitMatrix;
 import com.ljc.apkdown.utils.QRCodeUtil;
 import com.ljc.apkdown.utils.ftpPool.FTPFileBean;
 import com.ljc.apkdown.utils.ftpPool.FTPHelper;
+import com.ljc.apkdown.utils.ftpPool.FtpClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.ftp.FTPClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
@@ -32,12 +35,19 @@ public class FileListController {
 
     @Resource
     private FTPHelper ftpHelper;
+    @Autowired
+    FtpClient ftpClient;
 
     private static String QRCURL;
-
     @Value("${qrcUrl}")
     public void setQRCURL(String qurUrl) {
         QRCURL = qurUrl;
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public String index(){
+        return "FTP工具";
     }
 
     @GetMapping("/qrc/{item}")
@@ -56,22 +66,24 @@ public class FileListController {
 
     @GetMapping("/fileList/{item}")
     public String fileList(HttpServletRequest request, @PathVariable(value = "item") String item, ModelMap model) {
-        
+        FTPClient client=ftpClient.getFTPClient();
         List<FTPFileBean> arFiles = new ArrayList<>();
 
         if (StringUtils.isEmpty(item)) {
             model.addAttribute("data", "访问错误!!!");
         } else {
             try {
-                ftpHelper.list("/" + item + "/", "apk", item,arFiles);
+                ftpHelper.list(client,"/" + item + "/", "apk", item,arFiles);
                 if (!arFiles.isEmpty()) {
                     log.info(JSON.toJSONString(arFiles));
                     model.addAttribute("data",JSON.toJSONString(arFiles));
                 }if (arFiles.isEmpty()){
                     model.addAttribute("data", "没有这个项目");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                ftpClient.closeFTP(client);
             }
         }
         return "ftpFile";
@@ -79,7 +91,7 @@ public class FileListController {
 
     @GetMapping(value = "/down")
     public void downLoad(HttpServletResponse response, @RequestParam String filePath,@RequestParam String fileName) throws UnsupportedEncodingException {
-
+        FTPClient client=ftpClient.getFTPClient();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
@@ -91,7 +103,7 @@ public class FileListController {
 //        File f = new File();
 
         try {
-            InputStream is = ftpHelper.downloadFile(filePath);
+            InputStream is = ftpHelper.downloadFile(client,filePath);
             BufferedInputStream bis = new BufferedInputStream(is);
 //            response.addHeader("Content-Length", is.available() + "");
 
@@ -109,6 +121,8 @@ public class FileListController {
             is.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }finally {
+            ftpClient.closeFTP(client);
         }
     }
 
