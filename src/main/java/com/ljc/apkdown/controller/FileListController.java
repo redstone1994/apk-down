@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j
@@ -90,7 +88,7 @@ public class FileListController {
     }
 
     @GetMapping(value = "/down")
-    public void downLoad(HttpServletResponse response, @RequestParam String filePath,@RequestParam String fileName) throws UnsupportedEncodingException {
+    public void downLoad(HttpServletRequest request,HttpServletResponse response, @RequestParam String filePath,@RequestParam String fileName) throws UnsupportedEncodingException {
         FTPClient client=ftpClient.getFTPClient();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.setHeader("content-type", "application/octet-stream");
@@ -104,6 +102,7 @@ public class FileListController {
 
         try {
             InputStream is = ftpHelper.downloadFile(client,filePath);
+            log.info(request.getRemoteAddr()+"正在下载"+fileName);
             BufferedInputStream bis = new BufferedInputStream(is);
 //            response.addHeader("Content-Length", is.available() + "");
 
@@ -120,6 +119,7 @@ public class FileListController {
             out.close();
             is.close();
         } catch (Exception e) {
+            log.error("下载失败");
             throw new RuntimeException(e);
         }finally {
             ftpClient.closeFTP(client);

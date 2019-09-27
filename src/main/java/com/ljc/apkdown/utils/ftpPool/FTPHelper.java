@@ -94,11 +94,9 @@ public class FTPHelper {
     public InputStream downloadFile(FTPClient client,String pathname) throws IOException {
 
         try {
-            log.info("开始下载文件=" + pathname);
             return client.retrieveFileStream(pathname);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("下载失败！！！");
         }
         return null;
     }
