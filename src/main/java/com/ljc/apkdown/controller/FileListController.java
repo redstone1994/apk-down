@@ -37,6 +37,7 @@ public class FileListController {
     FtpClient ftpClient;
 
     private static String QRCURL;
+
     @Value("${qrcUrl}")
     public void setQRCURL(String qurUrl) {
         QRCURL = qurUrl;
@@ -44,7 +45,7 @@ public class FileListController {
 
     @GetMapping("/")
     @ResponseBody
-    public String index(){
+    public String index() {
         return "FTP工具";
     }
 
@@ -64,23 +65,24 @@ public class FileListController {
 
     @GetMapping("/fileList/{item}")
     public String fileList(HttpServletRequest request, @PathVariable(value = "item") String item, ModelMap model) {
-        FTPClient client=ftpClient.getFTPClient();
+        FTPClient client = ftpClient.getFTPClient();
         List<FTPFileBean> arFiles = new ArrayList<>();
 
         if (StringUtils.isEmpty(item)) {
             model.addAttribute("data", "访问错误!!!");
         } else {
             try {
-                ftpHelper.list(client,"/" + item + "/", "apk", item,arFiles);
+                ftpHelper.list(client, "/" + item + "/", "apk", item, arFiles);
                 if (!arFiles.isEmpty()) {
                     log.info(JSON.toJSONString(arFiles));
-                    model.addAttribute("data",JSON.toJSONString(arFiles));
-                }if (arFiles.isEmpty()){
+                    model.addAttribute("data", JSON.toJSONString(arFiles));
+                }
+                if (arFiles.isEmpty()) {
                     model.addAttribute("data", "没有这个项目");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 ftpClient.closeFTP(client);
             }
         }
@@ -88,24 +90,23 @@ public class FileListController {
     }
 
     @GetMapping(value = "/down")
-    public void downLoad(HttpServletRequest request,HttpServletResponse response, @RequestParam String filePath,@RequestParam String fileName) throws UnsupportedEncodingException {
-        FTPClient client=ftpClient.getFTPClient();
+    public void downLoad(HttpServletRequest request, HttpServletResponse response, @RequestParam String filePath, @RequestParam String fileName) throws UnsupportedEncodingException {
+        FTPClient client = ftpClient.getFTPClient();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
         String file = new String(fileName.getBytes("gbk"), "iso-8859-1");
         response.setHeader("Content-Disposition", "attachment;filename=" + file);//URLEncoder.encode(file,"GBK")
 //        response.setCharacterEncoding("utf-8");
-
 //        File f = new File(path + File.separator + fileName);
 //        File f = new File();
 
         try {
-            InputStream is = ftpHelper.downloadFile(client,filePath);
-            log.info(request.getRemoteAddr()+"正在下载"+fileName);
-            BufferedInputStream bis = new BufferedInputStream(is);
+            InputStream is = ftpHelper.downloadFile(client, filePath);
 //            response.addHeader("Content-Length", is.available() + "");
-
+            log.info("正在下载" + fileName);
+            BufferedInputStream bis = new BufferedInputStream(is);
+            log.info(String.valueOf(bis.available()));
             int len = -1;
             byte[] buffer = new byte[1024];
             OutputStream out = response.getOutputStream();
@@ -121,9 +122,10 @@ public class FileListController {
         } catch (Exception e) {
             log.error("下载失败");
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             ftpClient.closeFTP(client);
         }
     }
+
 
 }
