@@ -21,7 +21,7 @@
            lay-filter="demo">
         <thead>
         <tr>
-            <th lay-data="{field:'item', width:250, align:'center', sort: true}">项目</th>
+            <th lay-data="{field:'item', width:50, align:'center', sort: true}">序号</th>
             <th lay-data="{field:'fileName', width:250, align:'center', sort: true}">包名</th>
             <th lay-data="{field:'time', width:250, align:'center', sort: true}">时间</th>
             <th lay-data="{fixed: 'right', width:100, align:'center', toolbar: '#barDemo'}">操作</th>
