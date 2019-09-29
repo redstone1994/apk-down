@@ -90,7 +90,7 @@ public class FTPHelper {
      * @param pathname FTP服务器文件目录 *
      * @return
      */
-    public InputStream downloadFile(FTPClient client,String pathname) throws IOException {
+    public InputStream downloadFile(FTPClient client,String pathname) {
 
         try {
             return client.retrieveFileStream(pathname);

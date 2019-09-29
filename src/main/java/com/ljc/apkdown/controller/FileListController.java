@@ -93,7 +93,7 @@ public class FileListController {
     public void downLoad(HttpServletRequest request, HttpServletResponse response, @RequestParam String filePath, @RequestParam String fileName) throws UnsupportedEncodingException {
         FTPClient client = ftpClient.getFTPClient();
         response.setContentType("application/force-download");// 设置强制下载不打开
-        response.setHeader("content-type", "application/octet-stream");
+//        response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
         String file = new String(fileName.getBytes("gbk"), "iso-8859-1");
         response.setHeader("Content-Disposition", "attachment;filename=" + file);//URLEncoder.encode(file,"GBK")
@@ -101,28 +101,43 @@ public class FileListController {
 //        File f = new File(path + File.separator + fileName);
 //        File f = new File();
 
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
+
         try {
             InputStream is = ftpHelper.downloadFile(client, filePath);
-//            response.addHeader("Content-Length", is.available() + "");
-            log.info("正在下载" + fileName);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            log.info(String.valueOf(bis.available()));
-            int len = -1;
-            byte[] buffer = new byte[1024];
-            OutputStream out = response.getOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(out);
-            while ((len = bis.read(buffer)) > -1) {
-                bos.write(buffer, 0, len);
-                bos.flush();
+
+            log.info("==========");
+
+//            response.setHeader("Content-Length", String.valueOf(is.available()));
+            log.info("正在下载：{}" , fileName);
+            in = new BufferedInputStream(is);
+            out = new BufferedOutputStream(response.getOutputStream());
+
+            byte[] buffer = new byte[2048];
+            int count = 0;
+            while ((count = in.read(buffer, 0, 2048)) != -1) {
+                out.write(buffer, 0, count);
             }
-            bos.close();
-            bis.close();
-            out.close();
-            is.close();
+            out.flush();
         } catch (Exception e) {
             log.error("下载失败");
             throw new RuntimeException(e);
         } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                     e.printStackTrace();
+                }
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                     e.printStackTrace();
+                }
+            }
             ftpClient.closeFTP(client);
         }
     }
