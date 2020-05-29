@@ -8,10 +8,11 @@ spring:
     template-loader-path: classpath:/templates/ #模板加载路径 按需配置
     charset: UTF-8 #编码格式
     expose-request-attributes: true
-qrcUrl: http://10.10.10.11:8080/apk-down
+
+qrcUrl: https://inter-jenkins.wanmen.org/apk-down
 
 ftp:
   username: jenkins
   password: wm2012dx
-  host: 10.10.10.11
+  host: 10.8.8.6
   port: 21

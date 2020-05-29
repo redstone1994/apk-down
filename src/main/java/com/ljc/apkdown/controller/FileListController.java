@@ -106,9 +106,7 @@ public class FileListController {
 
         try {
             InputStream is = ftpHelper.downloadFile(client, filePath);
-
-            log.info("==========");
-
+            
 //            response.setHeader("Content-Length", String.valueOf(is.available()));
             log.info("正在下载：{}" , fileName);
             in = new BufferedInputStream(is);

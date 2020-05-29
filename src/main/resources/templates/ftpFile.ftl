@@ -8,7 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="${base}/css/layui.css" media="all">
-    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<#--    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>-->
+    <script src="${base}/jq.js"></script>
+
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
     <script type="application/javascript">
         var datas=${data};

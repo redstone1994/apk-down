@@ -28,7 +28,7 @@ public class QRCodeUtil {
         BitMatrix bitMatrix;
         try {
             //参数分别为：编码内容、编码类型、图片宽度、图片高度，设置参数
-            bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 300, 300,hints);
+            bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 170, 170,hints);
         }catch(WriterException e) {
             e.printStackTrace();
             return null;
