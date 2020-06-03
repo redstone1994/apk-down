@@ -51,10 +51,18 @@ public class FileListController {
 
     @GetMapping("/qrc/{item}")
     @ResponseBody
-    public void qrcController(HttpServletResponse response, @PathVariable(value = "item") String item) {
+    public void qrcController(HttpServletResponse response,HttpServletRequest request, @PathVariable(value = "item") String item) {
+        StringBuffer downPage=new StringBuffer();
+        downPage.append(request.getScheme());
+        downPage.append("://");
+        downPage.append(request.getServerName());
+        downPage.append(":");
+        downPage.append(request.getServerPort());
+        downPage.append("/apk-down/fileList/");
+        downPage.append(item);
 
-        String downPage = QRCURL + "/fileList/" + item;
-        BitMatrix qRcodeImg = QRCodeUtil.generateQRCodeStream(downPage, response);
+//        String downPage = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+ "/apk-down/fileList/" + item;
+        BitMatrix qRcodeImg = QRCodeUtil.generateQRCodeStream(downPage.toString(), response);
         // 将二维码输出到页面中
         try {
             MatrixToImageWriter.writeToStream(qRcodeImg, "png", response.getOutputStream());
@@ -67,7 +75,7 @@ public class FileListController {
     public String fileList(HttpServletRequest request, @PathVariable(value = "item") String item, ModelMap model) {
         FTPClient client = ftpClient.getFTPClient();
         List<FTPFileBean> arFiles = new ArrayList<>();
-
+        log.info(request.getServerName()+":"+request.getServerPort()+":"+request.getScheme());
         if (StringUtils.isEmpty(item)) {
             model.addAttribute("data", "访问错误!!!");
         } else {
