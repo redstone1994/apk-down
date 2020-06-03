@@ -72,10 +72,10 @@ public class FileListController {
     }
 
     @GetMapping("/fileList/{item}")
-    public String fileList(HttpServletRequest request, @PathVariable(value = "item") String item, ModelMap model) {
+    public String fileList(@PathVariable(value = "item") String item, ModelMap model) {
         FTPClient client = ftpClient.getFTPClient();
         List<FTPFileBean> arFiles = new ArrayList<>();
-        log.info(request.getServerName()+":"+request.getServerPort()+":"+request.getScheme());
+
         if (StringUtils.isEmpty(item)) {
             model.addAttribute("data", "访问错误!!!");
         } else {
