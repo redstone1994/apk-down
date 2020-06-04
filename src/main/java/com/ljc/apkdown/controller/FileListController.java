@@ -24,8 +24,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @Slf4j
@@ -52,17 +56,20 @@ public class FileListController {
     @GetMapping("/qrc/{item}")
     @ResponseBody
     public void qrcController(HttpServletResponse response,HttpServletRequest request, @PathVariable(value = "item") String item) {
-        StringBuffer downPage=new StringBuffer();
-        downPage.append(request.getScheme());
-        downPage.append("://");
-        downPage.append(request.getServerName());
-        downPage.append(":");
-        downPage.append(request.getServerPort());
-        downPage.append("/apk-down/fileList/");
-        downPage.append(item);
 
-//        String downPage = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+ "/apk-down/fileList/" + item;
+//        log.info(String.valueOf(request.getRequestURL()));
+//`
+//        String pattern = "http(.*?)apk-down";
+//        String mm="";
+//        Pattern r = Pattern.compile(pattern);
+//        Matcher m = r.matcher(String.valueOf(request.getRequestURL()));
+//        while (m.find()){
+//            mm=m.group(0);
+//        }
+
+        String downPage = QRCURL+ "/fileList/" + item;
         BitMatrix qRcodeImg = QRCodeUtil.generateQRCodeStream(downPage.toString(), response);
+
         // 将二维码输出到页面中
         try {
             MatrixToImageWriter.writeToStream(qRcodeImg, "png", response.getOutputStream());
@@ -72,9 +79,10 @@ public class FileListController {
     }
 
     @GetMapping("/fileList/{item}")
-    public String fileList(@PathVariable(value = "item") String item, ModelMap model) {
+    public String fileList(HttpServletRequest request,@PathVariable(value = "item") String item, ModelMap model) throws MalformedURLException {
         FTPClient client = ftpClient.getFTPClient();
         List<FTPFileBean> arFiles = new ArrayList<>();
+
 
         if (StringUtils.isEmpty(item)) {
             model.addAttribute("data", "访问错误!!!");
@@ -100,6 +108,8 @@ public class FileListController {
     @GetMapping(value = "/down")
     public void downLoad(HttpServletRequest request, HttpServletResponse response, @RequestParam String filePath, @RequestParam String fileName) throws UnsupportedEncodingException {
         FTPClient client = ftpClient.getFTPClient();
+
+
         response.setContentType("application/force-download");// 设置强制下载不打开
 //        response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
