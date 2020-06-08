@@ -102,13 +102,12 @@ public class FileListController {
                 ftpClient.closeFTP(client);
             }
         }
-        return "ftpFile";
+        return "fileList";
     }
 
     @GetMapping(value = "/down")
     public void downLoad(HttpServletRequest request, HttpServletResponse response, @RequestParam String filePath, @RequestParam String fileName) throws UnsupportedEncodingException {
         FTPClient client = ftpClient.getFTPClient();
-
 
         response.setContentType("application/force-download");// 设置强制下载不打开
 //        response.setHeader("content-type", "application/octet-stream");
