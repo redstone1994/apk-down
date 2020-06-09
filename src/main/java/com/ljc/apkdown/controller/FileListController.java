@@ -102,7 +102,7 @@ public class FileListController {
                 ftpClient.closeFTP(client);
             }
         }
-        return "fileLIst";
+        return "fileList";
     }
 
     @GetMapping(value = "/down")
