@@ -3,19 +3,24 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
     <title>测试包下载</title>
     <!-- 引入样式文件 -->
     <link rel="stylesheet" href="${base}/van.css"/>
-    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
-    <script type="application/javascript" src="${base}/vue.min.js"></script>
-    <script type="application/javascript" src="${base}/vant.min.js"></script>
+
 </head>
 
 <body>
+<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+<script type="application/javascript" src="${base}/vue.min.js"></script>
+<script type="application/javascript" src="${base}/vant.min.js"></script>
 
 <div id="head"></div>
 
 <div id="app" style="margin-top: 20%">
+    <template>
     <div v-for="apk in apklist" style="margin-top: 20px">
         <van-row type="flex" justify="center">
             <van-col>
@@ -31,6 +36,7 @@
             </van-col>
         </van-row>
     </div>
+    </template>
 </div>
 
 <script>
